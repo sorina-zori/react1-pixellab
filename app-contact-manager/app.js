@@ -1,2 +1,2 @@
 import searchForm from './modules/searchForm.js';
-// import notificationBar from './modules/notificationBar.js';
+import addContactButton from './modules/addContactButton.js';

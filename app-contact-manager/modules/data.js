@@ -7,10 +7,18 @@ export default [
     email: 'carol@carol.ro',
   },
   {
-    id: 1,
-    name: 'Carol',
-    surname: 'Carolsonecfa',
-    phone: '074100000000000000000',
-    email: 'carol@carol.ro',
+    id: 2,
+    name: 'Larry',
+    surname: 'Larryson',
+    phone: '07423000000',
+    email: 'larry@larry.ro',
+    pets: [
+      {
+        id: 1,
+        name: 'Poncho',
+        species: 'Caine',
+        age: 7,
+      },
+    ],
   },
 ];
