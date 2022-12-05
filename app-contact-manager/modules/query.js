@@ -6,11 +6,13 @@ export const getContacts = (needle = 'query') => {
 
     const haystack = values.reduce((haystack, value) => {
       if (typeof value === 'string') {
+        //homework
         haystack += value.toLowerCase();
       }
       return haystack;
     }, '');
 
+    //homework
     if (haystack.includes(needle.toLowerCase().replace(/\s+/g, ''))) {
       return true;
     }
