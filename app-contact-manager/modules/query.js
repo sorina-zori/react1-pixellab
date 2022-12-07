@@ -6,13 +6,11 @@ export const getContacts = (needle = 'query') => {
 
     const haystack = values.reduce((haystack, value) => {
       if (typeof value === 'string') {
-        //homework
         haystack += value.toLowerCase();
       }
       return haystack;
     }, '');
 
-    //homework
     if (haystack.includes(needle.toLowerCase().replace(/\s+/g, ''))) {
       return true;
     }
@@ -25,4 +23,31 @@ export const getContacts = (needle = 'query') => {
 export const createContact = (contact) => {
   //push mutates the data set
   contacts.push(contact);
+};
+
+export const deleteContact = (contactId) => {
+  let contactIndex = -1;
+
+  for (let i = 0; i < contacts.length; i++) {
+    const contact = contacts[i];
+
+    if (contactId === contact.id) {
+      contactIndex = i;
+
+      break;
+    }
+  }
+
+  if (contactIndex >= 0) {
+    // splice mutates
+    contacts.splice(contactIndex, 1);
+  }
+};
+
+export const findContact = (contactId) => {
+  const contact = contacts.find((contact) => {
+    return contact.id === Number(contactId);
+  });
+
+  return contact;
 };
