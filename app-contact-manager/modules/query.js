@@ -51,3 +51,29 @@ export const findContact = (contactId) => {
 
   return contact;
 };
+
+export const updateContact = (contactId, { name, surname, phone, email }) => {
+  const contact = findContact(contectId);
+
+  if (!contact) {
+    return;
+  }
+
+  contact.name = name;
+  contact.surname = surname;
+  contact.phone = phone;
+  contact.email = email;
+};
+
+export const createPet = (contactId, pet) => {
+  const contact = findContact(contactId);
+
+  if (contact === undefined) {
+    return;
+  }
+
+  contact.pets = contact.pets || [];
+
+  //push mutates
+  contact.pets.push(pet);
+};

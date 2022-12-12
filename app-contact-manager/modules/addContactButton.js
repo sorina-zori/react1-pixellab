@@ -6,7 +6,7 @@ const addContactButton = document.querySelector('.add-contact-button');
 
 addContactButton.addEventListener('click', () => {
   clearMessages();
-  clearStage(stage);
+  clearStage();
 
   stage.append(render());
 });

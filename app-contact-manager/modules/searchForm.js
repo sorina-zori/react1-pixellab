@@ -19,12 +19,12 @@ searchForm.addEventListener('submit', (event) => {
   }
 
   clearMessages();
-  clearStage(stage);
+  clearStage();
 
   const contacts = getContacts(queryString);
   const contactsCount = contacts.length;
 
-  const fragment = document.createElement('div');
+  const fragment = new DocumentFragment();
 
   contacts.forEach((contact) => {
     fragment.append(render(contact));

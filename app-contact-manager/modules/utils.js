@@ -3,6 +3,7 @@ export const pluralize = (count, { one, many }) => {
 };
 
 //homework
-export const clearStage = (stage) => {
+export const clearStage = () => {
+  const stage = document.querySelector('.stage');
   stage.innerHTML = '';
 };

@@ -23,7 +23,7 @@ export const render = (contact) => {
    >Edit</button>
    <button title="Add Pet"
       type="button"
-      class='btn btn-secondary'
+      class='btn btn-secondary add-pet-button'
     >Add Pet</button>
   `;
 

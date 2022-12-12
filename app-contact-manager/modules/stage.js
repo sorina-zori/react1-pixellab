@@ -1,8 +1,15 @@
 import { addMessage, clearMessages } from './notificationBar.js';
-import { createContact, deleteContact, findContact } from './query.js';
+import {
+  createContact,
+  createPet,
+  deleteContact,
+  findContact,
+  updateContact,
+} from './query.js';
 import { render as renderEditContact } from './editContact.js';
 import createMessage from './message.js';
 import { clearStage } from './utils.js';
+import { render as renderPetForm } from './addPetForm.js';
 
 const stage = document.querySelector('.stage');
 
@@ -17,7 +24,7 @@ stage.addEventListener('click', (event) => {
     return;
   }
 
-  clearStage(stage);
+  clearStage();
 });
 
 // create contact
@@ -43,7 +50,7 @@ stage.addEventListener('submit', (event) => {
 
   addMessage(createMessage(`Contact ${name.value} ${surname.value} created.`));
 
-  clearStage(stage);
+  clearStage();
 });
 
 //delete contact
@@ -86,7 +93,7 @@ stage.addEventListener('click', (event) => {
   const contactId = Number(parentElement.dataset.contactId);
   const contact = findContact(contactId);
 
-  clearStage(stage);
+  clearStage();
 
   stage.append(renderEditContact(contact));
 });
@@ -109,19 +116,64 @@ stage.addEventListener('submit', (event) => {
   const contactId = id.value;
   const contact = findContact(contactId);
 
-  if (!contact) {
-    return;
-  }
+  updateContact(contactId, {
+    name: name.value,
+    surname: surname.value,
+    phone: phone.value,
+    email: email.value,
+  });
 
-  contact.name = name.value;
-  contact.surname = surname.value;
-  contact.phone = phone.value;
-  contact.email = email.value;
-
-  clearStage(stage);
+  clearStage();
   clearMessages();
   addMessage(
     createMessage(`Contact ${contact.name} ${contact.surname} updated.`),
+  );
+});
+
+//add pet button
+stage.addEventListener('click', (event) => {
+  const { target } = event;
+
+  if (
+    target.nodeName !== 'BUTTON' ||
+    !target.classList.contains('add-pet-button')
+  ) {
+    return;
+  }
+
+  const button = target;
+  const parent = button.parentElement;
+  const contactId = parent.dataset.contactId;
+
+  clearStage();
+
+  stage.append(renderPetForm(contactId));
+});
+
+//add pet submit
+stage.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const { target } = event;
+
+  if (target.nodeName !== 'FORM' || !target.classList.contains('add-pet')) {
+    return;
+  }
+
+  const form = target;
+  //DOM input elements
+  const { name, species, age, contactId } = form;
+
+  createPet(contactId.value, {
+    name: name.value,
+    species: species.value,
+    age: age.value,
+    id: Number(Date.now().toString().slice(-6)),
+  });
+
+  clearStage();
+
+  addMessage(
+    createMessage(`Pet ${name.value} created for contact ${contactId.value}`),
   );
 });
 
