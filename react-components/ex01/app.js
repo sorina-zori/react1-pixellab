@@ -99,3 +99,7 @@ const total = Array.from(lis).reduce((total, li) => {
 }, 0);
 
 console.log(total);
+
+//homework
+
+//@todo over the break
