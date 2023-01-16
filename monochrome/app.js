@@ -256,6 +256,7 @@ class CartCounter extends React.Component {
     addEventListener(REMOVE_FROM_CART_EVENT, this.productCartAction);
   }
 
+  //homework
   componentWillUnmount() {
     removeEventListener(ADD_TO_WL_EVENT, this.wishlistAction);
     removeEventListener(REMOVE_FROM_WL_EVENT, this.wishlistAction);
@@ -313,6 +314,7 @@ class WishlistCounter extends React.Component {
     addEventListener(REMOVE_FROM_WL_EVENT, this.wishlistAction);
   }
 
+  //homework
   componentWillUnmount() {
     removeEventListener(ADD_TO_WL_EVENT, this.wishlistAction);
     removeEventListener(REMOVE_FROM_WL_EVENT, this.wishlistAction);
