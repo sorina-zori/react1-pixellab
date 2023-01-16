@@ -4,7 +4,6 @@ const ADD_TO_WL_EVENT = 'wl/productAdded';
 const REMOVE_FROM_WL_EVENT = 'wl/productRemoved';
 
 class NewsletterForm extends React.Component {
-  // state v1
   state = {
     email: '',
     formMessage: '',
@@ -22,7 +21,7 @@ class NewsletterForm extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    // event.target['field-newsletter'].value
+
     const email = this.state.email;
 
     this.setState({
@@ -31,7 +30,7 @@ class NewsletterForm extends React.Component {
 
     if (!this.validateEmail(email)) {
       this.setState({
-        formMessage: 'Please use a valid email',
+        formMessage: '*Please use a valid email',
       });
 
       return;
@@ -46,14 +45,12 @@ class NewsletterForm extends React.Component {
         busy: false,
         email: '',
         submitted: true,
-        successMessage: `${this.state.email} subscrbied!`,
+        successMessage: `${this.state.email}`,
       });
-    }, 3000);
+    }, 2000);
   };
 
   onInputChange = (event) => {
-    // currentTarget -> elementul pe care am pus eventul
-    // target -> elementul de pe care a plecat eventul
     const email = event.target.value;
 
     this.setState({
@@ -63,47 +60,47 @@ class NewsletterForm extends React.Component {
 
   render() {
     if (this.state.submitted) {
-      return <div className="container">{this.state.successMessage}</div>;
+      return (
+        <div className="sign-up-confirmation">
+          <span>{this.state.successMessage}</span> subscribed.
+        </div>
+      );
     }
 
     return (
-      <form className="form-newsletter container" onSubmit={this.onSubmit}>
-        <label htmlFor="field-newsletter">
-          Subscribe to our <span>newsletter</span>
-        </label>
+      <form action="" method="post" onSubmit={this.onSubmit}>
+        <label htmlFor="email-newsletter">Sign up for our newsletter</label>
         <input
-          type="text"
-          name="field-newsletter"
-          id="field-newsletter"
+          type="email"
+          name="email"
+          id="email-newsletter"
           value={this.state.email}
           onChange={this.onInputChange}
-          placeholder="enter your email address to receive the latest news!"
         ></input>
-        <button type="submit">
-          {this.state.busy ? '...loading' : 'Subscribe'}
-        </button>
-
         <div className="form-message">{this.state.formMessage}</div>
+        <button
+          type="submit"
+          className={`${this.state.busy === true ? 'busy' : ''}`}
+        >
+          {this.state.busy ? <i className="fas fa-spinner icon"></i> : 'SUMBIT'}
+        </button>
       </form>
     );
   }
 }
 
-const newsletterContainer = document.querySelector('.home-newsletter');
-// mount react the good way
+const newsletterContainer = document.querySelector(
+  '.footer-sign-up-newsletter',
+);
 ReactDOM.createRoot(newsletterContainer).render(
   <NewsletterForm></NewsletterForm>,
 );
 
 class AddToCartButton extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      busy: false,
-      inCart: false,
-    };
-  }
+  state = {
+    busy: false,
+    inCart: false,
+  };
 
   onClick = () => {
     this.setState({
@@ -131,19 +128,22 @@ class AddToCartButton extends React.Component {
 
   render() {
     const productInCart = this.state.inCart;
+    const productLoading = this.state.busy;
 
     return (
       <button
         onClick={this.onClick}
         type="button"
         title={`${productInCart ? 'Remove' : 'Add'} product to cart`}
-        className={`product-control ${productInCart ? 'added' : ''}`}
-        disabled={this.state.busy}
+        className={`product-control ${productLoading === true ? 'busy' : ''}`}
+        disabled={productLoading}
       >
-        {productInCart
-          ? `Product ${this.props.productId} in cart`
-          : 'Add to cart'}
-        {this.state.busy ? <i className="fas fa-spinner"></i> : <></>}
+        {productInCart ? (
+          <i className="far fa-check-square"></i>
+        ) : (
+          <i className="far fa-plus-square"></i>
+        )}
+        {productLoading ? <i className="fas fa-spinner icon"></i> : <></>}
       </button>
     );
   }
@@ -176,24 +176,27 @@ class AddToWishlistButton extends React.Component {
         busy: false,
         inWl: !this.state.inWl,
       });
-    }, 6000);
+    }, 2000);
   };
 
   render() {
     const productInWl = this.state.inWl;
+    const productLoading = this.state.busy;
 
     return (
       <button
         onClick={this.onClick}
         type="button"
         title={`${productInWl ? 'Remove' : 'Add'} product to wishlist`}
-        className={`product-control ${productInWl ? 'added' : ''}`}
-        disabled={this.state.busy}
+        className={`product-control ${productLoading === true ? 'busy' : ''}`}
+        disabled={productLoading}
       >
-        {productInWl
-          ? `Product ${this.props.productId} in wl`
-          : 'Add to wishlist'}
-        {this.state.busy ? <i className="fas fa-spinner"></i> : <></>}
+        {productInWl ? (
+          <i className="fa fa-heart added"></i>
+        ) : (
+          <i className="far fa-heart"></i>
+        )}
+        {productLoading ? <i className="fas fa-spinner icon"></i> : <></>}
       </button>
     );
   }
@@ -203,10 +206,10 @@ class ProductTileControls extends React.Component {
   render() {
     return (
       <>
-        <AddToCartButton productId={this.props.productId}></AddToCartButton>
         <AddToWishlistButton
           productId={this.props.productId}
         ></AddToWishlistButton>
+        <AddToCartButton productId={this.props.productId}></AddToCartButton>
       </>
     );
   }
@@ -219,22 +222,18 @@ productTileControls.forEach((productTileControl, index) => {
 });
 
 class CartCounter extends React.Component {
-  // never update state directly
   state = {
     cartItemsCount: 0,
-    cartItems: [], // array cu ids
+    cartItems: [],
   };
 
   productCartAction = (event) => {
     const { detail, type: eventType } = event;
     const { productId } = detail;
-    // no mutating state:
-    // slice clones
     const cartItems = this.state.cartItems.slice();
 
     switch (eventType) {
       case ADD_TO_CART_EVENT:
-        // push mutates
         cartItems.push(productId);
         this.setState({
           cartItems,
@@ -253,72 +252,59 @@ class CartCounter extends React.Component {
   };
 
   componentDidMount() {
-    // DOM
     addEventListener(ADD_TO_CART_EVENT, this.productCartAction);
     addEventListener(REMOVE_FROM_CART_EVENT, this.productCartAction);
   }
 
   componentWillUnmount() {
-    // DOM
-    removeEventListener(ADD_TO_CART_EVENT, this.productCartAction);
-    removeEventListener(REMOVE_FROM_CART_EVENT, this.productCartAction);
+    removeEventListener(ADD_TO_WL_EVENT, this.wishlistAction);
+    removeEventListener(REMOVE_FROM_WL_EVENT, this.wishlistAction);
   }
 
   render() {
     return (
-      <div
+      <li
         className="header-counter"
         onClick={() => {
-          if (this.state.cartItems.length > 0) {
-            alert(this.state.cartItems);
-          }
+          alert(this.state.cartItems);
         }}
       >
-        {this.state.cartItemsCount > 0 ? (
-          <span className="qty">{this.state.cartItemsCount}</span>
-        ) : (
-          <></>
-        )}
-        <i className="fas fa-shopping-cart icon"></i>
-      </div>
+        <span className="qty">
+          {this.state.cartItemsCount > 0 ? this.state.cartItemsCount : '0'}
+        </span>
+        <i className="fas fa-shopping-bag icon"></i>
+      </li>
     );
   }
 }
 
 class WishlistCounter extends React.Component {
   state = {
-    items: [],
     itemCount: 0,
+    items: [],
   };
 
   wishlistAction = (event) => {
     const { detail, type: eventType } = event;
     const { productId } = detail;
+    const items = this.state.items.slice();
 
-    if (eventType === ADD_TO_WL_EVENT) {
-      alert('event detected');
-      // slice clones
-      const items = this.state.items.slice();
-      items.push(productId);
-
-      this.setState({
-        items,
-        itemCount: this.state.itemCount + 1,
-      });
-
-      return;
-    }
-
-    if (eventType === REMOVE_FROM_WL_EVENT) {
-      this.setState({
-        // filter clones
-        items: this.state.items.filter((productId) => {
-          return productId !== detail.productId;
-        }),
-        itemCount: this.state.itemCount - 1,
-      });
-
-      return;
+    switch (eventType) {
+      case ADD_TO_WL_EVENT:
+        items.push(productId);
+        this.setState({
+          items,
+          itemCount: this.state.itemCount + 1,
+        });
+        break;
+      case REMOVE_FROM_WL_EVENT:
+        this.setState({
+          itemCount: this.state.itemCount - 1,
+          items: items.filter((productId) => {
+            return productId !== detail.productId;
+          }),
+        });
+        break;
     }
   };
 
@@ -334,58 +320,31 @@ class WishlistCounter extends React.Component {
 
   render() {
     return (
-      <div
+      <li
         className="header-counter"
         onClick={() => {
-          // early return
-          if (this.state.items.length === 0) {
-            return;
-          }
-
           alert(this.state.items);
         }}
       >
-        {this.state.itemCount > 0 ? (
-          <span className="qty">{this.state.itemCount}</span>
-        ) : (
-          <></>
-        )}
+        <span className="qty">
+          {this.state.itemCount > 0 ? this.state.itemCount : '0'}
+        </span>
         <i className="fas fa-heart icon"></i>
-      </div>
+      </li>
     );
   }
 }
 
 class HeaderCounters extends React.Component {
-  state = {
-    wlDisplayed: true,
-  };
-
   render() {
     return (
       <>
         <CartCounter></CartCounter>
-        {this.state.wlDisplayed === true ? (
-          <WishlistCounter></WishlistCounter>
-        ) : (
-          <></>
-        )}
-
-        <button
-          type="button"
-          onClick={() => {
-            this.setState({
-              wlDisplayed: !this.state.wlDisplayed,
-            });
-          }}
-        >
-          toggle
-        </button>
+        <WishlistCounter></WishlistCounter>
       </>
     );
   }
 }
 
 const headerCounters = document.querySelector('.header-counters');
-const root = ReactDOM.createRoot(headerCounters);
-root.render(<HeaderCounters></HeaderCounters>);
+ReactDOM.createRoot(headerCounters).render(<HeaderCounters></HeaderCounters>);
